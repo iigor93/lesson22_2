@@ -11,40 +11,36 @@
 
 
 class Unit:
-    def move(self, field, x_coord, y_coord, direction, is_fly, crawl, speed = 1):
+    def __init__(self):
+        self.speed = 1
+        self.x_coordinate = 0
+        self.y_coordinate = 0
 
+    def _is_fly_or_crawl(self, is_fly: bool, crawl: bool):
         if is_fly and crawl:
             raise ValueError('Рожденный ползать летать не должен!')
 
+    def _speed_calc(self, is_fly: bool, crawl: bool):
+        self._is_fly_or_crawl(is_fly, crawl)
         if is_fly:
-            speed *= 1.2
-            if direction == 'UP':
-                new_y = y_coord + speed
-                new_x = x_coord
-            elif direction == 'DOWN':
-                new_y = y_coord - speed
-                new_x = x_coord
-            elif direction == 'LEFT':
-                new_y = y_coord
-                new_x = x_coord - speed
-            elif direction == 'RIGTH':
-                new_y = y_coord
-                new_x = x_coord + speed
+            self.speed *= 1.2
         if crawl:
-            speed *= 0.5
-            if direction == 'UP':
-                new_y = y_coord + speed
-                new_x = x_coord
-            elif direction == 'DOWN':
-                new_y = y_coord - speed
-                new_x = x_coord
-            elif direction == 'LEFT':
-                new_y = y_coord
-                new_x = x_coord - speed
-            elif direction == 'RIGTH':
-                new_y = y_coord
-                new_x = x_coord + speed
+            self.speed *= 0.5
 
-            field.set_unit(x=new_x, y=new_y, unit=self)
+    def _position_calc(self, direction):
+        if direction == 'UP':
+            self.y_coordinate += self.speed
+        elif direction == 'DOWN':
+            self.y_coordinate -= self.speed
+        elif direction == 'LEFT':
+            self.x_coordinate -= self.speed
+        elif direction == 'RIGTH':
+            self.x_coordinate += self.speed
 
-#     ...
+        return 1, 2
+
+    def move(self, field, direction, is_fly, crawl):
+        self._speed_calc(is_fly, crawl)
+        self._position_calc(direction)
+
+        field.set_unit(x=self.x_coordinate, y=self.y_coordinate, unit=self)
